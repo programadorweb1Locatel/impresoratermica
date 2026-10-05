@@ -1,0 +1,8 @@
+services:
+  scaner:
+    build: .
+    image: scaner-locatel:latest
+    container_name: scaner-locatel
+    restart: unless-stopped
+    ports:
+      - "8080:80"

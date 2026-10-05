@@ -1,0 +1,1046 @@
+/* ========================================================
+   SISTEMA DE DISEÑO EMPRESARIAL / CORPORATIVO (CLEAN ENTERPRISE)
+   Fondo blanco/slate con acentos controlados en Verde, Naranja y Morado
+   ======================================================== */
+:root {
+  /* Fondo y Superficies */
+  --bg-app: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #ffffff;
+  --border-subtle: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-dark: #334155;
+
+  /* Tipografía */
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --font-family-base: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Acento Verde (Locatel / Estado / Confirmación) */
+  --color-green: #059669;
+  --color-green-hover: #047857;
+  --color-green-light: #ecfdf5;
+  --color-green-border: #a7f3d0;
+
+  /* Acento Morado (Botón de Impresión Principal) */
+  --color-purple: #6366f1;
+  --color-purple-hover: #4f46e5;
+  --color-purple-light: #eef2ff;
+  --color-purple-disabled: #cbd5e1;
+
+  /* Acento Naranja (Botón Re-escanear / Limpiar) */
+  --color-orange: #f97316;
+  --color-orange-hover: #ea580c;
+  --color-orange-light: #fff7ed;
+
+  /* Sombras Modernas Ejecutivas */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 4px 14px 0 rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 20px 35px -10px rgba(15, 23, 42, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-family-base);
+  background: var(--bg-app);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-viewport {
+  width: 100%;
+  max-width: 420px;
+  min-height: 100vh;
+  padding: 14px 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+/* ========================================================
+   1. BARRA SUPERIOR BLUETOOTH (ESTILO TARJETA HARDWARE CLEAN)
+   ======================================================== */
+.bt-card {
+  background: var(--bg-surface);
+  border-radius: 16px;
+  padding: 11px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: none;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bt-card:hover {
+  border-color: var(--border-medium);
+  box-shadow: none;
+}
+
+.bt-card:active {
+  transform: scale(0.99);
+}
+
+.bt-icon-wrapper {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s;
+}
+
+.bt-pulse-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #94a3b8;
+  border: 2px solid var(--bg-surface);
+  transition: background 0.3s;
+}
+
+.bt-pulse-dot.connected {
+  background: var(--color-green);
+  box-shadow: none;
+}
+
+.bt-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.bt-header-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bt-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.bt-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.bt-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.bt-action-btn {
+  background: #f8fafc;
+  border: 1px solid var(--border-subtle);
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.bt-action-btn:hover {
+  background: #f1f5f9;
+  color: var(--text-primary);
+}
+
+/* ========================================================
+   2. VISOR DE CÁMARA (VENTANA ÓPTICA EMPRESARIAL)
+   ======================================================== */
+.scanner-card {
+  position: relative;
+  width: 100%;
+  height: 172px;
+  background: #09090b;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-subtle);
+}
+
+.scanner-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #000;
+}
+
+.laser-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #ef4444;
+  box-shadow: none;
+  animation: scanLaser 2.2s ease-in-out infinite alternate;
+  z-index: 10;
+  pointer-events: none;
+}
+
+@keyframes scanLaser {
+  0% {
+    top: 8%;
+  }
+
+  100% {
+    top: 92%;
+  }
+}
+
+.scan-reticle {
+  position: absolute;
+  inset: 20px 32px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.scan-badge {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 3px 11px;
+  border-radius: 20px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: #f8fafc;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: pulseDot 1.2s infinite;
+}
+
+@keyframes pulseDot {
+
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+}
+
+/* ========================================================
+   3. BARRA DE ENTRADA MANUAL (SEARCH BAR EMPRESARIAL)
+   ======================================================== */
+.input-bar {
+  background: var(--bg-surface);
+  border-radius: 14px;
+  padding: 5px 6px 5px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: none;
+  border: 1.5px solid var(--border-subtle);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-bar:focus-within {
+  border-color: var(--color-green);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+}
+
+.barcode-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.3px;
+  background: transparent;
+}
+
+.barcode-input::placeholder {
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.btn-clear {
+  background: #f1f5f9;
+  border: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.btn-clear:hover {
+  background: #e2e8f0;
+  color: var(--text-primary);
+}
+
+.btn-search {
+  background: var(--color-green);
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.btn-search:hover {
+  background: var(--color-green-hover);
+}
+
+.btn-search:active {
+  transform: scale(0.95);
+}
+
+/* ========================================================
+   4. TARJETA DE PRODUCTO / ETIQUETA FIJA
+   ======================================================== */
+.product-card {
+  background: var(--bg-surface);
+  border-radius: 18px;
+  padding: 13px 14px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.card-header-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-green-light);
+  color: var(--color-green);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 20px;
+  border: 1px solid var(--color-green-border);
+  letter-spacing: 0.3px;
+}
+
+.product-status-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 190px;
+}
+
+/* VIEWPORT DE ALTURA BLOQUEADA */
+.label-fixed-viewport {
+  height: 215px;
+  min-height: 215px;
+  max-height: 215px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px dashed var(--border-medium);
+}
+
+.empty-label-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+  gap: 8px;
+}
+
+.empty-icon {
+  font-size: 26px;
+  opacity: 0.8;
+}
+
+.empty-label-state p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.error-label-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 20px;
+  gap: 6px;
+  animation: popIn 0.25s ease-out;
+}
+
+.error-icon-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fee2e2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2px;
+}
+
+.error-label-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.2px;
+}
+
+.error-label-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  font-weight: 500;
+  max-width: 250px;
+}
+
+/* ========================================================
+   5. ETIQUETA TÉRMICA REALISTA (SIMULACIÓN TSPL 50mm x 30mm)
+   ======================================================== */
+.thermal-label {
+  width: 320px;
+  height: 195px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  box-shadow: none;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  font-family: var(--font-family-mono);
+  color: #000000;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* Modo Normal */
+.thermal-label.normal-mode .th-desc-box {
+  line-height: 1.15;
+}
+
+.th-desc-l1,
+.th-desc-l2 {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.th-ref-iva {
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 4px;
+  color: #111827;
+  letter-spacing: -0.2px;
+}
+
+.th-total-heading {
+  font-size: 11px;
+  font-weight: 800;
+  margin-top: 4px;
+}
+
+.th-main-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: -2px;
+}
+
+.th-ref-prefix {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.th-big-price {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.th-footer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding-top: 2px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* Modo Promoción */
+.thermal-label.promo-mode .th-banner {
+  background: #000000;
+  color: #ffffff;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 900;
+  padding: 3px 0;
+  margin: -10px -12px 6px -12px;
+  border-radius: 4px 4px 0 0;
+  letter-spacing: 0.5px;
+}
+
+.thermal-label.promo-mode .th-strikethrough-row {
+  display: inline-block;
+  position: relative;
+  font-size: 12px;
+  font-weight: 800;
+  margin-top: 2px;
+  text-decoration: line-through;
+  text-decoration-thickness: 2.5px;
+  text-decoration-color: #000000;
+}
+
+.thermal-label.promo-mode .th-promo-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: -4px;
+}
+
+/* ========================================================
+   6. BOTONES DE ACCIÓN (ESTILO MODERNO CORPORATIVO)
+   ======================================================== */
+.action-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.btn-print {
+  flex: 1;
+  height: 54px;
+  border-radius: 14px;
+  background: var(--color-purple);
+  border: none;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease, opacity 0.2s;
+}
+
+.btn-print:hover:not(:disabled) {
+  background: var(--color-purple-hover);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+}
+
+.btn-print:not(:disabled):active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 6px rgba(99, 102, 241, 0.25);
+}
+
+.btn-print:disabled {
+  background: var(--color-purple-disabled);
+  color: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.75;
+}
+
+.btn-rescan {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: var(--color-orange);
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.28);
+  transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.btn-rescan:hover {
+  background: var(--color-orange-hover);
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35);
+}
+
+.btn-rescan:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 6px rgba(249, 115, 22, 0.25);
+}
+
+/* ========================================================
+   7. CAJÓN DE AJUSTES Y PRUEBAS
+   ======================================================== */
+.tools-drawer {
+  background: var(--bg-surface);
+  border-radius: 14px;
+  padding: 11px 14px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  font-size: 13px;
+}
+
+.tools-drawer summary {
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: color 0.15s;
+}
+
+.tools-drawer summary:hover {
+  color: var(--text-primary);
+}
+
+.tools-content {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.test-btn-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.btn-test {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: #f8fafc;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-test:hover {
+  background: #f1f5f9;
+}
+
+.tspl-debug-area {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  padding: 8px;
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  background: #f8fafc;
+  color: #334155;
+  resize: vertical;
+}
+
+/* ========================================================
+   8. MODALES EMPRESARIALES (BLUETOOTH E IMPRESIÓN)
+   ======================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  background: var(--bg-surface);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 350px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-subtle);
+  transform: scale(0.95);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+
+.modal-header {
+  padding: 16px 18px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-title-wrap h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.modal-title-wrap p {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.modal-close-btn {
+  background: #f1f5f9;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.modal-close-btn:hover {
+  background: #e2e8f0;
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 20px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+/* Radar Bluetooth */
+.radar-box {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radar-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--color-green);
+  opacity: 0;
+  animation: radarWave 2s cubic-bezier(0.1, 0.2, 0.5, 1) infinite;
+}
+
+.radar-circle:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.radar-circle:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
+@keyframes radarWave {
+  0% {
+    transform: scale(0.3);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+.radar-center-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-green);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 2;
+}
+
+.modal-status-text h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.modal-status-text p {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.35;
+}
+
+.modal-btn-primary {
+  width: 100%;
+  height: 46px;
+  border-radius: 12px;
+  background: var(--color-green);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+  transition: background 0.15s, transform 0.1s;
+}
+
+.modal-btn-primary:hover {
+  background: var(--color-green-hover);
+}
+
+.modal-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.modal-btn-secondary {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modal-btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.modal-btn-danger {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 13.5px;
+  font-weight: 600;
+  border: 1px solid #fecaca;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.modal-btn-danger:hover {
+  background: #fecaca;
+}
+
+/* Modal de Impresión */
+.print-modal-card {
+  padding: 24px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.success-icon-bubble {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-green-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-green);
+  box-shadow: 0 0 0 8px rgba(5, 150, 105, 0.1);
+  animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.printing-icon-bubble {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--color-purple-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-purple);
+  box-shadow: 0 0 0 8px rgba(99, 102, 241, 0.12);
+}
+
+.printing-icon-bubble svg {
+  animation: floatPrinter 1s ease-in-out infinite alternate;
+}
+
+@keyframes floatPrinter {
+  0% {
+    transform: translateY(-3px);
+  }
+
+  100% {
+    transform: translateY(3px);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.print-receipt-preview {
+  background: #f8fafc;
+  border: 1px dashed var(--border-medium);
+  border-radius: 12px;
+  padding: 10px 14px;
+  width: 100%;
+  text-align: left;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.receipt-row.bold {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text-primary);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 4px;
+  margin-top: 6px;
+}
