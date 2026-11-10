@@ -95,3 +95,4 @@ docker run -d -p 8080:80 --name scaner-locatel scaner-locatel
 ## 📄 Licencia
 
 Proyecto de uso interno para Locatel.
+

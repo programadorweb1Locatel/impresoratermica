@@ -1,7 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { BluetoothThermalPrinter } from './services/bluetooth';
+import { UsbThermalPrinter } from './services/usbPrinter';
 import { buscarProductoPorCodigo } from './services/api';
 import { generarTSPL, formatDecimal, EJEMPLO_NORMAL, EJEMPLO_PROMO } from './utils/tsplGenerator';
+import { generarZPL } from './utils/zplGenerator';
 
 import { BluetoothCard } from './components/BluetoothCard';
 import { BluetoothModal } from './components/BluetoothModal';
@@ -11,9 +13,10 @@ import { ThermalLabelPreview } from './components/ThermalLabelPreview';
 import { ActionButtons } from './components/ActionButtons';
 import { PrintModal } from './components/PrintModal';
 import { ToolsDrawer } from './components/ToolsDrawer';
+import { ZplTesterModal } from './components/ZplTesterModal';
 
 export function App() {
-    // Estado del Bluetooth
+    // 1. Estado del Bluetooth
     const [btState, setBtState] = useState({
         status: "Desconectado",
         connected: false,
@@ -23,6 +26,19 @@ export function App() {
 
     const btPrinterRef = useRef(new BluetoothThermalPrinter((newState) => {
         setBtState(newState);
+    }));
+
+    // 2. Estado de la Impresora USB (PC)
+    const [usbState, setUsbState] = useState({
+        status: "Desconectado",
+        connected: false,
+        deviceName: "Sin conexión USB",
+        subInfo: "Toca para conectar USB PC",
+        connectionType: null
+    });
+
+    const usbPrinterRef = useRef(new UsbThermalPrinter((newState) => {
+        setUsbState(newState);
     }));
 
     // Estados de UI y producto
@@ -37,6 +53,7 @@ export function App() {
 
     // Modales
     const [isBtModalOpen, setIsBtModalOpen] = useState(false);
+    const [isZplModalOpen, setIsZplModalOpen] = useState(false);
     const [printModal, setPrintModal] = useState({
         isOpen: false,
         state: 'imprimiendo', // 'imprimiendo' | 'exito' | 'error'
@@ -56,15 +73,24 @@ export function App() {
         const ref = formatDecimal(rawRef);
         setResultadoTexto(`${desc.substring(0, 20)}... ($${ref})`);
 
-        // Si auto-print está activo e impresora conectada
-        if (autoPrint && btPrinterRef.current.isConnected) {
+        // Si auto-print está activo y hay alguna impresora conectada (USB o Bluetooth)
+        const canAutoPrint = autoPrint && (btPrinterRef.current.isConnected || usbPrinterRef.current.isConnected);
+        if (canAutoPrint) {
             try {
                 setPrintModal({
                     isOpen: true,
                     state: 'imprimiendo',
                     data: {}
                 });
-                await btPrinterRef.current.print(tspl);
+
+                if (usbPrinterRef.current.isConnected) {
+                    // Si está conectada por USB a la PC, enviamos ZPL II o TSPL
+                    const zpl = generarZPL(datos);
+                    await usbPrinterRef.current.printRaw(zpl);
+                } else if (btPrinterRef.current.isConnected) {
+                    await btPrinterRef.current.print(tspl);
+                }
+
                 setPrintModal({
                     isOpen: true,
                     state: 'exito',
@@ -109,7 +135,6 @@ export function App() {
             await cargarProducto(datos);
         } catch (error) {
             console.error("Error al buscar producto:", error);
-            // Si no se encuentra, dejar limpio y activar mensaje de error genérico
             setProducto(null);
             setTsplCode('');
             setHasError(true);
@@ -131,9 +156,9 @@ export function App() {
         }, 2500);
     }, [isScanningDisabled, handleConsultar]);
 
-    // Imprimir etiqueta actual
+    // Imprimir etiqueta actual (USB o Bluetooth)
     const handlePrint = async () => {
-        if (!tsplCode) {
+        if (!tsplCode && !producto) {
             setPrintModal({
                 isOpen: true,
                 state: 'error',
@@ -142,11 +167,14 @@ export function App() {
             return;
         }
 
-        if (!btPrinterRef.current.isConnected) {
+        const isUsbConnected = usbPrinterRef.current.isConnected;
+        const isBtConnected = btPrinterRef.current.isConnected;
+
+        if (!isUsbConnected && !isBtConnected) {
             setPrintModal({
                 isOpen: true,
                 state: 'error',
-                data: { error: "Primero debes conectar la impresora por Bluetooth." }
+                data: { error: "Primero debes conectar la impresora por USB en tu PC o por Bluetooth." }
             });
             return;
         }
@@ -162,13 +190,22 @@ export function App() {
                 state: 'imprimiendo',
                 data: {}
             });
-            await btPrinterRef.current.print(tsplCode);
+
+            if (isUsbConnected) {
+                // Impresión por USB: Se genera ZPL II
+                const zplCodeToSend = generarZPL(producto);
+                await usbPrinterRef.current.printRaw(zplCodeToSend);
+            } else {
+                // Impresión por Bluetooth: Se envía TSPL
+                await btPrinterRef.current.print(tsplCode);
+            }
+
             setPrintModal({
                 isOpen: true,
                 state: 'exito',
                 data: { desc, precio, codigo }
             });
-            // Limpiar la etiqueta tras completarse la impresión
+            
             setProducto(null);
             setTsplCode('');
             setResultadoTexto('Impresión completada.');
@@ -203,9 +240,23 @@ export function App() {
         await btPrinterRef.current.disconnect();
     };
 
+    // Conectar USB de PC
+    const handleConnectUsb = async (mode = 'serial', baudRate = 9600) => {
+        if (mode === 'serial') {
+            return await usbPrinterRef.current.connectSerial(baudRate);
+        } else {
+            return await usbPrinterRef.current.connectWebUsb();
+        }
+    };
+
+    // Desconectar USB de PC
+    const handleDisconnectUsb = async () => {
+        await usbPrinterRef.current.disconnect();
+    };
+
     return (
         <div className="app-viewport">
-            {/* 1. Barra superior Bluetooth */}
+            {/* 1. Barra superior de Conexión de Hardware */}
             <BluetoothCard 
                 btState={btState} 
                 onOpenModal={() => setIsBtModalOpen(true)} 
@@ -237,16 +288,19 @@ export function App() {
             <ActionButtons 
                 onPrint={handlePrint}
                 onRescan={handleRescan}
-                isPrintDisabled={!tsplCode}
+                isPrintDisabled={!tsplCode && !producto}
             />
 
-            {/* 6. Cajón de opciones y pruebas rápidas */}
+            {/* 6. Cajón de opciones, pruebas y acceso al Módulo ZPL2 & USB */}
             <ToolsDrawer 
                 autoPrint={autoPrint}
                 onToggleAutoPrint={setAutoPrint}
                 onTestNormal={() => cargarProducto(EJEMPLO_NORMAL)}
                 onTestPromo={() => cargarProducto(EJEMPLO_PROMO)}
                 tsplCode={tsplCode}
+                onOpenZplTester={() => setIsZplModalOpen(true)}
+                usbConnected={usbState.connected}
+                usbDeviceName={usbState.deviceName}
             />
 
             {/* Modal de vinculación Bluetooth */}
@@ -256,6 +310,17 @@ export function App() {
                 btState={btState}
                 onConnect={handleConnectBluetooth}
                 onDisconnect={handleDisconnectBluetooth}
+            />
+
+            {/* Módulo de Pruebas ZPL II & Impresión USB de PC */}
+            <ZplTesterModal 
+                isOpen={isZplModalOpen}
+                onClose={() => setIsZplModalOpen(false)}
+                productoActual={producto}
+                usbPrinter={usbPrinterRef.current}
+                usbState={usbState}
+                onConnectUsb={handleConnectUsb}
+                onDisconnectUsb={handleDisconnectUsb}
             />
 
             {/* Modal de confirmación de impresión */}
