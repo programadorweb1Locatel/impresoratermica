@@ -1,8 +1,3 @@
-/**
- * Utilidades para generación de etiquetas térmicas en lenguaje TSPL/TSPL2 (50mm x 30mm)
- */
-
-// Formatea números con separador de miles con punto y coma decimal (ej: 1.000,00 o 1,97)
 export function formatDecimal(val) {
     if (val === null || val === undefined || isNaN(Number(val))) return "0,00";
     const partes = Number(val).toFixed(2).split('.');

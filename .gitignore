@@ -32,6 +32,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 *.log
+*.tmp
+*.tmp.pdf
 
 # Archivos de configuración de editores y SO
 .vscode/
